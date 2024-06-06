@@ -47,6 +47,20 @@ public class LibrariesForLibsInPluginsBlock extends AbstractExternalDependencyFa
     }
 
     /**
+     * Dependency provider for <b>material</b> with <b>com.google.android.material:material</b> coordinates and
+     * with version reference <b>material</b>
+     * <p>
+     * This dependency was declared in catalog libs.versions.toml
+     *
+     * @deprecated Will be removed in Gradle 9.0.
+     */
+    @Deprecated
+    public Provider<MinimalExternalModuleDependency> getMaterial() {
+        org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
+        return create("material");
+    }
+
+    /**
      * Group of libraries at <b>androidx</b>
      *
      * @deprecated Will be removed in Gradle 9.0.
@@ -87,14 +101,52 @@ public class LibrariesForLibsInPluginsBlock extends AbstractExternalDependencyFa
      */
     @Deprecated
     public static class AndroidxLibraryAccessors extends SubDependencyFactory {
-        private final AndroidxActivityLibraryAccessors laccForAndroidxActivityLibraryAccessors = new AndroidxActivityLibraryAccessors(owner);
-        private final AndroidxComposeLibraryAccessors laccForAndroidxComposeLibraryAccessors = new AndroidxComposeLibraryAccessors(owner);
         private final AndroidxCoreLibraryAccessors laccForAndroidxCoreLibraryAccessors = new AndroidxCoreLibraryAccessors(owner);
         private final AndroidxEspressoLibraryAccessors laccForAndroidxEspressoLibraryAccessors = new AndroidxEspressoLibraryAccessors(owner);
-        private final AndroidxLifecycleLibraryAccessors laccForAndroidxLifecycleLibraryAccessors = new AndroidxLifecycleLibraryAccessors(owner);
-        private final AndroidxUiLibraryAccessors laccForAndroidxUiLibraryAccessors = new AndroidxUiLibraryAccessors(owner);
 
         public AndroidxLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
+
+        /**
+         * Dependency provider for <b>activity</b> with <b>androidx.activity:activity</b> coordinates and
+         * with version reference <b>activity</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         *
+         * @deprecated Will be removed in Gradle 9.0.
+         */
+        @Deprecated
+        public Provider<MinimalExternalModuleDependency> getActivity() {
+            org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
+            return create("androidx.activity");
+        }
+
+        /**
+         * Dependency provider for <b>appcompat</b> with <b>androidx.appcompat:appcompat</b> coordinates and
+         * with version reference <b>appcompat</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         *
+         * @deprecated Will be removed in Gradle 9.0.
+         */
+        @Deprecated
+        public Provider<MinimalExternalModuleDependency> getAppcompat() {
+            org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
+            return create("androidx.appcompat");
+        }
+
+        /**
+         * Dependency provider for <b>constraintlayout</b> with <b>androidx.constraintlayout:constraintlayout</b> coordinates and
+         * with version reference <b>constraintlayout</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         *
+         * @deprecated Will be removed in Gradle 9.0.
+         */
+        @Deprecated
+        public Provider<MinimalExternalModuleDependency> getConstraintlayout() {
+            org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
+            return create("androidx.constraintlayout");
+        }
 
         /**
          * Dependency provider for <b>junit</b> with <b>androidx.test.ext:junit</b> coordinates and
@@ -108,42 +160,6 @@ public class LibrariesForLibsInPluginsBlock extends AbstractExternalDependencyFa
         public Provider<MinimalExternalModuleDependency> getJunit() {
             org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
             return create("androidx.junit");
-        }
-
-        /**
-         * Dependency provider for <b>material3</b> with <b>androidx.compose.material3:material3</b> coordinates and
-         * with <b>no version specified</b>
-         * <p>
-         * This dependency was declared in catalog libs.versions.toml
-         *
-         * @deprecated Will be removed in Gradle 9.0.
-         */
-        @Deprecated
-        public Provider<MinimalExternalModuleDependency> getMaterial3() {
-            org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
-            return create("androidx.material3");
-        }
-
-        /**
-         * Group of libraries at <b>androidx.activity</b>
-         *
-         * @deprecated Will be removed in Gradle 9.0.
-         */
-        @Deprecated
-        public AndroidxActivityLibraryAccessors getActivity() {
-            org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
-            return laccForAndroidxActivityLibraryAccessors;
-        }
-
-        /**
-         * Group of libraries at <b>androidx.compose</b>
-         *
-         * @deprecated Will be removed in Gradle 9.0.
-         */
-        @Deprecated
-        public AndroidxComposeLibraryAccessors getCompose() {
-            org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
-            return laccForAndroidxComposeLibraryAccessors;
         }
 
         /**
@@ -166,76 +182,6 @@ public class LibrariesForLibsInPluginsBlock extends AbstractExternalDependencyFa
         public AndroidxEspressoLibraryAccessors getEspresso() {
             org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
             return laccForAndroidxEspressoLibraryAccessors;
-        }
-
-        /**
-         * Group of libraries at <b>androidx.lifecycle</b>
-         *
-         * @deprecated Will be removed in Gradle 9.0.
-         */
-        @Deprecated
-        public AndroidxLifecycleLibraryAccessors getLifecycle() {
-            org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
-            return laccForAndroidxLifecycleLibraryAccessors;
-        }
-
-        /**
-         * Group of libraries at <b>androidx.ui</b>
-         *
-         * @deprecated Will be removed in Gradle 9.0.
-         */
-        @Deprecated
-        public AndroidxUiLibraryAccessors getUi() {
-            org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
-            return laccForAndroidxUiLibraryAccessors;
-        }
-
-    }
-
-    /**
-     * @deprecated Will be removed in Gradle 9.0.
-     */
-    @Deprecated
-    public static class AndroidxActivityLibraryAccessors extends SubDependencyFactory {
-
-        public AndroidxActivityLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
-
-        /**
-         * Dependency provider for <b>compose</b> with <b>androidx.activity:activity-compose</b> coordinates and
-         * with version reference <b>activityCompose</b>
-         * <p>
-         * This dependency was declared in catalog libs.versions.toml
-         *
-         * @deprecated Will be removed in Gradle 9.0.
-         */
-        @Deprecated
-        public Provider<MinimalExternalModuleDependency> getCompose() {
-            org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
-            return create("androidx.activity.compose");
-        }
-
-    }
-
-    /**
-     * @deprecated Will be removed in Gradle 9.0.
-     */
-    @Deprecated
-    public static class AndroidxComposeLibraryAccessors extends SubDependencyFactory {
-
-        public AndroidxComposeLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
-
-        /**
-         * Dependency provider for <b>bom</b> with <b>androidx.compose:compose-bom</b> coordinates and
-         * with version reference <b>composeBom</b>
-         * <p>
-         * This dependency was declared in catalog libs.versions.toml
-         *
-         * @deprecated Will be removed in Gradle 9.0.
-         */
-        @Deprecated
-        public Provider<MinimalExternalModuleDependency> getBom() {
-            org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
-            return create("androidx.compose.bom");
         }
 
     }
@@ -288,203 +234,19 @@ public class LibrariesForLibsInPluginsBlock extends AbstractExternalDependencyFa
 
     }
 
-    /**
-     * @deprecated Will be removed in Gradle 9.0.
-     */
-    @Deprecated
-    public static class AndroidxLifecycleLibraryAccessors extends SubDependencyFactory {
-        private final AndroidxLifecycleRuntimeLibraryAccessors laccForAndroidxLifecycleRuntimeLibraryAccessors = new AndroidxLifecycleRuntimeLibraryAccessors(owner);
-
-        public AndroidxLifecycleLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
-
-        /**
-         * Group of libraries at <b>androidx.lifecycle.runtime</b>
-         *
-         * @deprecated Will be removed in Gradle 9.0.
-         */
-        @Deprecated
-        public AndroidxLifecycleRuntimeLibraryAccessors getRuntime() {
-            org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
-            return laccForAndroidxLifecycleRuntimeLibraryAccessors;
-        }
-
-    }
-
-    /**
-     * @deprecated Will be removed in Gradle 9.0.
-     */
-    @Deprecated
-    public static class AndroidxLifecycleRuntimeLibraryAccessors extends SubDependencyFactory {
-
-        public AndroidxLifecycleRuntimeLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
-
-        /**
-         * Dependency provider for <b>ktx</b> with <b>androidx.lifecycle:lifecycle-runtime-ktx</b> coordinates and
-         * with version reference <b>lifecycleRuntimeKtx</b>
-         * <p>
-         * This dependency was declared in catalog libs.versions.toml
-         *
-         * @deprecated Will be removed in Gradle 9.0.
-         */
-        @Deprecated
-        public Provider<MinimalExternalModuleDependency> getKtx() {
-            org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
-            return create("androidx.lifecycle.runtime.ktx");
-        }
-
-    }
-
-    /**
-     * @deprecated Will be removed in Gradle 9.0.
-     */
-    @Deprecated
-    public static class AndroidxUiLibraryAccessors extends SubDependencyFactory implements DependencyNotationSupplier {
-        private final AndroidxUiTestLibraryAccessors laccForAndroidxUiTestLibraryAccessors = new AndroidxUiTestLibraryAccessors(owner);
-        private final AndroidxUiToolingLibraryAccessors laccForAndroidxUiToolingLibraryAccessors = new AndroidxUiToolingLibraryAccessors(owner);
-
-        public AndroidxUiLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
-
-        /**
-         * Dependency provider for <b>ui</b> with <b>androidx.compose.ui:ui</b> coordinates and
-         * with <b>no version specified</b>
-         * <p>
-         * This dependency was declared in catalog libs.versions.toml
-         *
-         * @deprecated Will be removed in Gradle 9.0.
-         */
-        @Deprecated
-        public Provider<MinimalExternalModuleDependency> asProvider() {
-            org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
-            return create("androidx.ui");
-        }
-
-        /**
-         * Dependency provider for <b>graphics</b> with <b>androidx.compose.ui:ui-graphics</b> coordinates and
-         * with <b>no version specified</b>
-         * <p>
-         * This dependency was declared in catalog libs.versions.toml
-         *
-         * @deprecated Will be removed in Gradle 9.0.
-         */
-        @Deprecated
-        public Provider<MinimalExternalModuleDependency> getGraphics() {
-            org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
-            return create("androidx.ui.graphics");
-        }
-
-        /**
-         * Group of libraries at <b>androidx.ui.test</b>
-         *
-         * @deprecated Will be removed in Gradle 9.0.
-         */
-        @Deprecated
-        public AndroidxUiTestLibraryAccessors getTest() {
-            org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
-            return laccForAndroidxUiTestLibraryAccessors;
-        }
-
-        /**
-         * Group of libraries at <b>androidx.ui.tooling</b>
-         *
-         * @deprecated Will be removed in Gradle 9.0.
-         */
-        @Deprecated
-        public AndroidxUiToolingLibraryAccessors getTooling() {
-            org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
-            return laccForAndroidxUiToolingLibraryAccessors;
-        }
-
-    }
-
-    /**
-     * @deprecated Will be removed in Gradle 9.0.
-     */
-    @Deprecated
-    public static class AndroidxUiTestLibraryAccessors extends SubDependencyFactory {
-
-        public AndroidxUiTestLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
-
-        /**
-         * Dependency provider for <b>junit4</b> with <b>androidx.compose.ui:ui-test-junit4</b> coordinates and
-         * with <b>no version specified</b>
-         * <p>
-         * This dependency was declared in catalog libs.versions.toml
-         *
-         * @deprecated Will be removed in Gradle 9.0.
-         */
-        @Deprecated
-        public Provider<MinimalExternalModuleDependency> getJunit4() {
-            org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
-            return create("androidx.ui.test.junit4");
-        }
-
-        /**
-         * Dependency provider for <b>manifest</b> with <b>androidx.compose.ui:ui-test-manifest</b> coordinates and
-         * with <b>no version specified</b>
-         * <p>
-         * This dependency was declared in catalog libs.versions.toml
-         *
-         * @deprecated Will be removed in Gradle 9.0.
-         */
-        @Deprecated
-        public Provider<MinimalExternalModuleDependency> getManifest() {
-            org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
-            return create("androidx.ui.test.manifest");
-        }
-
-    }
-
-    /**
-     * @deprecated Will be removed in Gradle 9.0.
-     */
-    @Deprecated
-    public static class AndroidxUiToolingLibraryAccessors extends SubDependencyFactory implements DependencyNotationSupplier {
-
-        public AndroidxUiToolingLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
-
-        /**
-         * Dependency provider for <b>tooling</b> with <b>androidx.compose.ui:ui-tooling</b> coordinates and
-         * with <b>no version specified</b>
-         * <p>
-         * This dependency was declared in catalog libs.versions.toml
-         *
-         * @deprecated Will be removed in Gradle 9.0.
-         */
-        @Deprecated
-        public Provider<MinimalExternalModuleDependency> asProvider() {
-            org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
-            return create("androidx.ui.tooling");
-        }
-
-        /**
-         * Dependency provider for <b>preview</b> with <b>androidx.compose.ui:ui-tooling-preview</b> coordinates and
-         * with <b>no version specified</b>
-         * <p>
-         * This dependency was declared in catalog libs.versions.toml
-         *
-         * @deprecated Will be removed in Gradle 9.0.
-         */
-        @Deprecated
-        public Provider<MinimalExternalModuleDependency> getPreview() {
-            org.gradle.internal.deprecation.DeprecationLogger.deprecateBehaviour("Accessing libraries or bundles from version catalogs in the plugins block.").withAdvice("Only use versions or plugins from catalogs in the plugins block.").willBeRemovedInGradle9().withUpgradeGuideSection(8, "kotlin_dsl_deprecated_catalogs_plugins_block").nagUser();
-            return create("androidx.ui.tooling.preview");
-        }
-
-    }
-
     public static class VersionAccessors extends VersionFactory  {
 
         public VersionAccessors(ProviderFactory providers, DefaultVersionCatalog config) { super(providers, config); }
 
         /**
-         * Version alias <b>activityCompose</b> with value <b>1.8.0</b>
+         * Version alias <b>activity</b> with value <b>1.9.0</b>
          * <p>
          * If the version is a rich version and cannot be represented as a
          * single version string, an empty string is returned.
          * <p>
          * This version was declared in catalog libs.versions.toml
          */
-        public Provider<String> getActivityCompose() { return getVersion("activityCompose"); }
+        public Provider<String> getActivity() { return getVersion("activity"); }
 
         /**
          * Version alias <b>agp</b> with value <b>8.4.0</b>
@@ -497,17 +259,27 @@ public class LibrariesForLibsInPluginsBlock extends AbstractExternalDependencyFa
         public Provider<String> getAgp() { return getVersion("agp"); }
 
         /**
-         * Version alias <b>composeBom</b> with value <b>2023.08.00</b>
+         * Version alias <b>appcompat</b> with value <b>1.7.0</b>
          * <p>
          * If the version is a rich version and cannot be represented as a
          * single version string, an empty string is returned.
          * <p>
          * This version was declared in catalog libs.versions.toml
          */
-        public Provider<String> getComposeBom() { return getVersion("composeBom"); }
+        public Provider<String> getAppcompat() { return getVersion("appcompat"); }
 
         /**
-         * Version alias <b>coreKtx</b> with value <b>1.10.1</b>
+         * Version alias <b>constraintlayout</b> with value <b>2.1.4</b>
+         * <p>
+         * If the version is a rich version and cannot be represented as a
+         * single version string, an empty string is returned.
+         * <p>
+         * This version was declared in catalog libs.versions.toml
+         */
+        public Provider<String> getConstraintlayout() { return getVersion("constraintlayout"); }
+
+        /**
+         * Version alias <b>coreKtx</b> with value <b>1.13.1</b>
          * <p>
          * If the version is a rich version and cannot be represented as a
          * single version string, an empty string is returned.
@@ -557,14 +329,14 @@ public class LibrariesForLibsInPluginsBlock extends AbstractExternalDependencyFa
         public Provider<String> getKotlin() { return getVersion("kotlin"); }
 
         /**
-         * Version alias <b>lifecycleRuntimeKtx</b> with value <b>2.6.1</b>
+         * Version alias <b>material</b> with value <b>1.12.0</b>
          * <p>
          * If the version is a rich version and cannot be represented as a
          * single version string, an empty string is returned.
          * <p>
          * This version was declared in catalog libs.versions.toml
          */
-        public Provider<String> getLifecycleRuntimeKtx() { return getVersion("lifecycleRuntimeKtx"); }
+        public Provider<String> getMaterial() { return getVersion("material"); }
 
     }
 

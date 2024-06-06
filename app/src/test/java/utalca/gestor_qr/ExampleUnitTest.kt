@@ -1,4 +1,4 @@
-package utalca.cl.administrador_qr
+package utalca.gestor_qr
 
 import org.junit.Test
 

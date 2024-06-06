@@ -1,4 +1,4 @@
-package utalca.cl.administrador_qr
+package utalca.gestor_qr
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("utalca.cl.administrador_qr", appContext.packageName)
+        assertEquals("utalca.gestor_qr", appContext.packageName)
     }
 }
