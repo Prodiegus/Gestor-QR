@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Administrador-QR"
+rootProject.name = "gestor-qr"
 include(":app")
  
