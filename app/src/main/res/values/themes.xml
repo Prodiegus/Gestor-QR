@@ -17,8 +17,9 @@
 
     <style name="NavBar">
         <item name="android:background">@color/primary</item>
-        <item name="itemIconTint">@color/white</item>
+        <item name="itemIconTint">@color/bottom_navigation_item_color</item>
         <item name="itemTextColor">@color/white</item>
+        <item name="itemIconPadding">10dp</item>
     </style>
 
 </resources>

@@ -2,14 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/escanear"
-       android:icon="@android:drawable/ic_menu_camera"
+        android:icon="@drawable/scanicon"
         android:title="Escanear" />
     <item
         android:id="@+id/historial"
-        android:icon="@android:drawable/ic_menu_recent_history"
+        android:icon="@drawable/historialicon"
         android:title="Historial" />
     <item
         android:id="@+id/crear"
-        android:icon="@android:drawable/ic_menu_add"
+        android:icon="@drawable/crearicon"
         android:title="Crear" />
 </menu>
