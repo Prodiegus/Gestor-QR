@@ -33,6 +33,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures{
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -44,6 +47,10 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.material3.android)
     implementation("androidx.constraintlayout:constraintlayout:2.1.2")
+    implementation("com.journeyapps:zxing-android-embedded:4.1.0") {
+        isTransitive = false
+    }
+    implementation ("com.google.zxing:core:3.3.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

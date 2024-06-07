@@ -1,10 +1,19 @@
 package utalca.gestor_qr.MainViews
 
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.content.ContextCompat
+import com.google.zxing.ResultPoint
+import com.google.zxing.integration.android.IntentIntegrator
+import com.journeyapps.barcodescanner.BarcodeCallback
+import com.journeyapps.barcodescanner.BarcodeResult
+import com.journeyapps.barcodescanner.CompoundBarcodeView
 import utalca.gestor_qr.R
 
 // TODO: Rename parameter arguments, choose names that match
@@ -18,15 +27,29 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class Escanear : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
+    private lateinit var barcodeView: CompoundBarcodeView
+
+    private var content: String? = null
+    private var address: String? = null
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+        if (result != null) {
+            if (result.contents == null) {
+                Toast.makeText( this.context, "No se pudo", Toast.LENGTH_LONG).show()
+            } else {
+                content = result.contents
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            content = it.getString(ARG_PARAM1)
+            address = it.getString(ARG_PARAM2)
         }
     }
 
@@ -35,7 +58,44 @@ class Escanear : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_escanear, container, false)
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(arrayOf(android.Manifest.permission.CAMERA), 0)
+        }
+        val view = inflater.inflate(R.layout.fragment_escanear, container, false)
+
+        barcodeView = view.findViewById(R.id.barcode_scanner)
+        barcodeView.setStatusText("")
+
+        val callback = object : BarcodeCallback{
+            override fun barcodeResult(result: BarcodeResult?) {
+                if (result != null) {
+                    barcodeView.setStatusText(result.text)
+                    Toast.makeText(context, result.text, Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun possibleResultPoints(resultPoints: List<ResultPoint>) {
+
+            }
+
+        }
+        barcodeView.decodeSingle(callback)
+
+        return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        barcodeView.resume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        barcodeView.pause()
     }
 
     companion object {
