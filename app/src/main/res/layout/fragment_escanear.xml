@@ -5,14 +5,11 @@
     android:layout_height="match_parent"
     tools:context=".MainViews.Escanear">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.journeyapps.barcodescanner.CompoundBarcodeView
+        android:id="@+id/barcode_scanner"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="30dp"
-        android:fontFamily="sans-serif"
-        android:textSize="40sp"
-        android:text="Escanear" />
+        android:theme="@style/scanner"
+        />
 
 </FrameLayout>

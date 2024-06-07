@@ -19,7 +19,11 @@
         <item name="android:background">@color/primary</item>
         <item name="itemIconTint">@color/bottom_navigation_item_color</item>
         <item name="itemTextColor">@color/white</item>
-        <item name="itemIconPadding">10dp</item>
+    </style>
+
+    <style name="scanner">
+        <item name="zxing_viewfinder_mask">@color/ligth</item>
+        <item name="zxing_viewfinder_laser">@null</item>
     </style>
 
 </resources>

@@ -11,14 +11,18 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import utalca.gestor_qr.MainViews.Crear
 import utalca.gestor_qr.MainViews.Escanear
 import utalca.gestor_qr.MainViews.Historial
+import utalca.gestor_qr.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    val escanear = Escanear()
-    val crear = Crear()
-    val historial = Historial()
+    private lateinit var binding: ActivityMainBinding
+
+    private val escanear = Escanear()
+    private val crear = Crear()
+    private val historial = Historial()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
