@@ -21,16 +21,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+
+        window.statusBarColor = resources.getColor(R.color.primary)
+
         val navigationView = findViewById<BottomNavigationView>(R.id.navigation)
         navigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         loadFragment(escanear)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.navigation), { view, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.navigation)) { view, insets ->
             val params = view.layoutParams as RelativeLayout.LayoutParams
             params.topMargin = insets.getInsets(WindowInsetsCompat.Type.displayCutout()).top
             view.layoutParams = params
             insets
-        })
+        }
+
     }
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->

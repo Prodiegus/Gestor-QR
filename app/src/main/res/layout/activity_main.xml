@@ -9,16 +9,17 @@
     tools:context=".MainActivity">
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/navigation"
-        style="@style/NavBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="8dp"
-        android:layout_alignParentTop="true"
-        app:labelVisibilityMode="selected"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:menu="@menu/nav" />
+    android:id="@+id/navigation"
+    style="@style/NavBar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:elevation="8dp"
+    app:itemIconSize="40dp"
+    app:labelVisibilityMode="labeled"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent"
+    app:menu="@menu/nav" />
 
     <FrameLayout
         android:id="@+id/frame_container"
