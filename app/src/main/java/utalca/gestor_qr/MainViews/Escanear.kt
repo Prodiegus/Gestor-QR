@@ -30,6 +30,8 @@ private const val ARG_PARAM2 = "param2"
  */
 class Escanear : Fragment() {
 
+    private var LOCATION_PERMISSION_CODE = 1
+
     private lateinit var barcodeView: CompoundBarcodeView
     private lateinit var abrirScanButton: Button
 
@@ -69,6 +71,15 @@ class Escanear : Fragment() {
         ) {
             requestPermissions(arrayOf(android.Manifest.permission.CAMERA), 0)
         }
+
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_CODE)
+        }
+
         val view = inflater.inflate(R.layout.fragment_escanear, container, false)
 
         barcodeView = view.findViewById(R.id.barcode_scanner)
@@ -93,6 +104,22 @@ class Escanear : Fragment() {
         return view
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            this.LOCATION_PERMISSION_CODE -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    // Permission was granted, you can now get the location
+                } else {
+                    // Permission was denied, you can't get the location
+                }
+                return
+            }
+            // Handle other permission results
+            else -> {
+                // Ignore all other requests.
+            }
+        }
+    }
     override fun onResume() {
         super.onResume()
         barcodeView.resume()
