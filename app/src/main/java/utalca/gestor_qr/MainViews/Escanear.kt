@@ -1,5 +1,6 @@
 package utalca.gestor_qr.MainViews
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -7,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.google.zxing.ResultPoint
@@ -29,6 +31,7 @@ private const val ARG_PARAM2 = "param2"
 class Escanear : Fragment() {
 
     private lateinit var barcodeView: CompoundBarcodeView
+    private lateinit var abrirScanButton: Button
 
     private var content: String? = null
     private var address: String? = null
@@ -53,6 +56,7 @@ class Escanear : Fragment() {
         }
     }
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -68,13 +72,14 @@ class Escanear : Fragment() {
         val view = inflater.inflate(R.layout.fragment_escanear, container, false)
 
         barcodeView = view.findViewById(R.id.barcode_scanner)
+        abrirScanButton = view.findViewById(R.id.abrir_scan_button)
+
         barcodeView.setStatusText("")
 
         val callback = object : BarcodeCallback{
             override fun barcodeResult(result: BarcodeResult?) {
                 if (result != null) {
-                    barcodeView.setStatusText(result.text)
-                    Toast.makeText(context, result.text, Toast.LENGTH_LONG).show()
+                    abrirScanButton.visibility = View.VISIBLE
                 }
             }
 
