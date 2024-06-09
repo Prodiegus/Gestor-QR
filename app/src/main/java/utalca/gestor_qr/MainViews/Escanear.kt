@@ -10,12 +10,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.zxing.ResultPoint
 import com.google.zxing.integration.android.IntentIntegrator
 import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.CompoundBarcodeView
+import utalca.gestor_qr.Manifest
 import utalca.gestor_qr.R
 
 // TODO: Rename parameter arguments, choose names that match
@@ -34,6 +37,7 @@ class Escanear : Fragment() {
 
     private lateinit var barcodeView: CompoundBarcodeView
     private lateinit var abrirScanButton: Button
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private var content: String? = null
     private var address: String? = null
@@ -104,6 +108,17 @@ class Escanear : Fragment() {
         return view
     }
 
+    private fun getLocalizacion() {
+        if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return
+        }
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    // Use the location
+                }
+            }
+    }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
             this.LOCATION_PERMISSION_CODE -> {
