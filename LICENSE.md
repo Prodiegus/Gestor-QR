@@ -1,2 +1,2 @@
 
-Copyright (C) 2024 Prodiegus
+Copyright (C) 2024 APKaos
