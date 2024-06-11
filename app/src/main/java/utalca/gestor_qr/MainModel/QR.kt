@@ -1,13 +1,16 @@
 package utalca.gestor_qr.MainModel
 
-class QR {
+import java.io.Serializable
+class QR  : Serializable {
     private var url: String? = null
     private var nombre: String? = null
-    private var address: String? = null
-    constructor(url: String?, nombre: String?, address: String?) {
+    private var latitude: Double = 0.0
+    private var longitude: Double = 0.0
+    constructor(url: String?, nombre: String?, latitude: Double, longitude: Double) {
         this.url = url
         this.nombre = nombre
-        this.address = address
+        this.latitude = latitude
+        this.longitude = longitude
     }
 
     fun getUrl(): String? {
@@ -16,8 +19,11 @@ class QR {
     fun getNombre(): String? {
         return nombre
     }
-    fun getAddress(): String? {
-        return address
+    fun getLatitude(): Double {
+        return latitude
+    }
+    fun getLongitude(): Double {
+        return longitude
     }
     fun setUrl(url: String?) {
         this.url = url
@@ -25,7 +31,10 @@ class QR {
     fun setNombre(nombre: String?) {
         this.nombre = nombre
     }
-    fun setAddress(address: String?) {
-        this.address = address
+    fun setLatitude(latitude: Double) {
+        this.latitude = latitude
+    }
+    fun setLongitude(longitude: Double) {
+        this.longitude = longitude
     }
 }
