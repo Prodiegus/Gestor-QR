@@ -1,9 +1,12 @@
 package utalca.gestor_qr.MainViews
 
+import Serializador
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
+import android.provider.CallLog.Locations
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,24 +16,25 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.zxing.ResultPoint
 import com.google.zxing.integration.android.IntentIntegrator
 import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.CompoundBarcodeView
-import utalca.gestor_qr.Manifest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import org.jsoup.Jsoup
+import utalca.gestor_qr.MainActivity
+import utalca.gestor_qr.MainModel.QR
 import utalca.gestor_qr.R
+import utalca.gestor_qr.VerQR
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [Escanear.newInstance] factory method to
- * create an instance of this fragment.
- */
 class Escanear : Fragment() {
 
     private var LOCATION_PERMISSION_CODE = 1
@@ -39,9 +43,13 @@ class Escanear : Fragment() {
     private lateinit var abrirScanButton: Button
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
+    private var location: Location? = null
+    private var url: String? = null
     private var content: String? = null
-    private var address: String? = null
+    private var qr = location?.let { QR(url, content, it.latitude, location!!.longitude) }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null) {
             if (result.contents == null) {
@@ -49,8 +57,6 @@ class Escanear : Fragment() {
             } else {
                 content = result.contents
             }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
         }
     }
 
@@ -58,8 +64,9 @@ class Escanear : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             content = it.getString(ARG_PARAM1)
-            address = it.getString(ARG_PARAM2)
+            url = it.getString(ARG_PARAM2)
         }
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
     }
 
     @SuppressLint("MissingInflatedId")
@@ -67,7 +74,6 @@ class Escanear : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 android.Manifest.permission.CAMERA
@@ -94,6 +100,14 @@ class Escanear : Fragment() {
         val callback = object : BarcodeCallback{
             override fun barcodeResult(result: BarcodeResult?) {
                 if (result != null) {
+                    // Process the barcode result here
+                    getLocalizacion()
+                    runBlocking {
+                        val title = getTitulo(result.text)
+                        qr = location?.let { QR(result.text, title, it.latitude, location!!.longitude) }
+                        abrirScanButton.visibility = View.VISIBLE
+                        // Use title and location here
+                    }
                     abrirScanButton.visibility = View.VISIBLE
                 }
             }
@@ -108,6 +122,53 @@ class Escanear : Fragment() {
         return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        abrirScanButton = view.findViewById(R.id.abrir_scan_button)
+        abrirScanButton.setOnClickListener {
+            if (qr == null) {
+                val intent = Intent(requireContext(), MainActivity::class.java)
+                startActivity(intent)
+            }
+            val serializador = Serializador(requireContext())
+            serializador.guardarQR(qr!!, qr!!.getNombre()!!)
+
+            val intentIntegrator = IntentIntegrator.forSupportFragment(this)
+            intentIntegrator.setOrientationLocked(false)
+            intentIntegrator.setPrompt("")
+            intentIntegrator.initiateScan()
+
+            // Iniciar la nueva actividad
+            val intent = Intent(requireContext(), VerQR::class.java)
+            startActivity(intent)
+        }
+}
+
+    private suspend fun getTitulo(url: String): String {
+        if (url.isEmpty()) {
+            return ""
+        }
+        if (url === null) {
+            return ""
+        }
+        return withContext(Dispatchers.IO) {
+            val doc = Jsoup.connect(url).get()
+            val title = doc.title()
+            if (title.isNotEmpty()) {
+                title
+            } else {
+                val bodyText = doc.body().text()
+                val words = bodyText.split(" ")
+                if (words.size >= 2) {
+                    words[0] + " " + words[1]
+                } else {
+                    bodyText
+                }
+            }
+        }
+    }
+
     private fun getLocalizacion() {
         if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return
@@ -115,26 +176,28 @@ class Escanear : Fragment() {
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location ->
                 if (location != null) {
-                    // Use the location
+                    this.location = location
+                    // Use location here
                 }
             }
     }
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        when (requestCode) {
-            this.LOCATION_PERMISSION_CODE -> {
-                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    // Permission was granted, you can now get the location
-                } else {
-                    // Permission was denied, you can't get the location
-                }
-                return
+
+ override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    when (requestCode) {
+        this.LOCATION_PERMISSION_CODE -> {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                getLocalizacion()
+            } else {
+                Toast.makeText(requireContext(), "Permiso denegado", Toast.LENGTH_SHORT).show()
             }
-            // Handle other permission results
-            else -> {
-                // Ignore all other requests.
-            }
+            return
+        }
+        else -> {
+            // Ignore all other requests.
         }
     }
+}
+
     override fun onResume() {
         super.onResume()
         barcodeView.resume()
@@ -146,15 +209,6 @@ class Escanear : Fragment() {
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment Escanear.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             Escanear().apply {

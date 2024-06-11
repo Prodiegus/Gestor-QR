@@ -52,6 +52,7 @@ dependencies {
     }
     implementation ("com.google.android.gms:play-services-location:18.0.0")
     implementation ("com.google.zxing:core:3.3.0")
+    implementation("org.jsoup:jsoup:1.14.3")
     implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
