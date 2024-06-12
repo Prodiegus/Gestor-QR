@@ -1,6 +1,7 @@
 package utalca.gestor_qr.MainModel
 
 import java.io.Serializable
+
 class QR  : Serializable {
     private var url: String? = null
     private var nombre: String? = null
