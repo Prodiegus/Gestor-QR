@@ -74,20 +74,14 @@ class Escanear : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                android.Manifest.permission.CAMERA
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissions(arrayOf(android.Manifest.permission.CAMERA), 0)
-        }
+        val permissions = arrayOf(
+            android.Manifest.permission.CAMERA,
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        )
 
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_CODE)
+        if (ContextCompat.checkSelfPermission(requireContext(), permissions[0]) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(requireContext(), permissions[1]) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(permissions, PERMISSIONS_REQUEST_CODE)
         }
 
         val view = inflater.inflate(R.layout.fragment_escanear, container, false)
@@ -100,15 +94,15 @@ class Escanear : Fragment() {
         val callback = object : BarcodeCallback{
             override fun barcodeResult(result: BarcodeResult?) {
                 if (result != null) {
-                    // Process the barcode result here
                     getLocalizacion()
                     runBlocking {
                         val title = getTitulo(result.text)
                         qr = location?.let { QR(result.text, title, it.latitude, location!!.longitude) }
                         abrirScanButton.visibility = View.VISIBLE
-                        // Use title and location here
                     }
                     abrirScanButton.visibility = View.VISIBLE
+
+                    barcodeView.pause()
                 }
             }
 
@@ -127,12 +121,12 @@ class Escanear : Fragment() {
 
         abrirScanButton = view.findViewById(R.id.abrir_scan_button)
         abrirScanButton.setOnClickListener {
-            if (qr == null) {
-                val intent = Intent(requireContext(), MainActivity::class.java)
+            if (qr != null) {
+                val intent = Intent(requireContext(), MainActivity::class.java).apply {
+                    putExtra("qr", qr)
+                }
                 startActivity(intent)
             }
-            val serializador = Serializador(requireContext())
-            serializador.guardarQR(qr!!, qr!!.getNombre()!!)
 
             val intentIntegrator = IntentIntegrator.forSupportFragment(this)
             intentIntegrator.setOrientationLocked(false)
@@ -140,7 +134,9 @@ class Escanear : Fragment() {
             intentIntegrator.initiateScan()
 
             // Iniciar la nueva actividad
-            val intent = Intent(requireContext(), VerQR::class.java)
+            val intent = Intent(requireContext(), VerQR::class.java).apply {
+                putExtra("qr", qr)
+            }
             startActivity(intent)
         }
 }
@@ -171,32 +167,36 @@ class Escanear : Fragment() {
 
     private fun getLocalizacion() {
         if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            val manualLocation = Location("manual")
+            manualLocation.latitude = -35.423244
+            manualLocation.longitude = -71.648483
+            this.location = manualLocation
             return
         }
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location ->
                 if (location != null) {
                     this.location = location
-                    // Use location here
                 }
             }
     }
 
- override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-    when (requestCode) {
-        this.LOCATION_PERMISSION_CODE -> {
-            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                getLocalizacion()
-            } else {
-                Toast.makeText(requireContext(), "Permiso denegado", Toast.LENGTH_SHORT).show()
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            PERMISSIONS_REQUEST_CODE -> {
+                val allPermissionsGranted = grantResults.all { it == PackageManager.PERMISSION_GRANTED }
+                if (allPermissionsGranted) {
+                    getLocalizacion()
+                } else {
+                    Toast.makeText(requireContext(), "Todos los permisos necesarios no fueron concedidos", Toast.LENGTH_SHORT).show()
+                }
+                return
             }
-            return
-        }
-        else -> {
-            // Ignore all other requests.
+            else -> {
+                // Ignore all other requests.
+            }
         }
     }
-}
 
     override fun onResume() {
         super.onResume()
@@ -209,6 +209,7 @@ class Escanear : Fragment() {
     }
 
     companion object {
+        private const val PERMISSIONS_REQUEST_CODE = 0
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             Escanear().apply {
