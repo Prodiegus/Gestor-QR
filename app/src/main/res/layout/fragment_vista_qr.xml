@@ -1,20 +1,91 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainViews.VistaQr"
     android:background="@color/ligth">
 
-    <ImageView
-        android:id="@+id/QRView"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        android:adjustViewBounds="true"
-        android:background="@color/white"
-        android:src="@drawable/qrcode_www_figma_com__1_" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+        <ImageView
+            android:id="@+id/QRView"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:adjustViewBounds="true"
+            android:background="@color/white"
+            android:src="@drawable/qrcode_www_figma_com__1_" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="44dp"
+            android:layout_marginLeft="22dp"
+            android:layout_marginRight="22dp"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Posición: "
+                android:layout_gravity="bottom"
+                android:textColor="@color/dark"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/pos_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_gravity="bottom"
+                android:text="Abrir mapa"
+                android:textColor="@color/dark"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:src="@drawable/map" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="22dp"
+            android:layout_marginEnd="22dp"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/dark"
+            android:text="Información:"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="76dp"
+            android:layout_marginLeft="22dp"
+            android:layout_marginRight="22dp"
+            android:background="@drawable/roudedcontainer"
+            >
+            <TextView
+                android:id="@+id/url_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="22dp"
+                android:layout_marginEnd="22dp"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/dark"
+                android:text="nunca_jamas"
+                android:textSize="14sp"/>
+
+        </LinearLayout>
+    </LinearLayout>
 
 
 
-</FrameLayout>
+</RelativeLayout>
