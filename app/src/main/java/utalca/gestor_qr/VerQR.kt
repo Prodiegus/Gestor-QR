@@ -45,8 +45,8 @@ class VerQR : AppCompatActivity() {
             intent.getSerializableExtra("qr") as? QR
         } else if (intent.data != null) {
             // Si el Intent contiene una URI de datos, deserializar el objeto QR del archivo en esa URI
-            val file = File(intent.data?.path)
-            serializador.cargarQR(file.name)
+            val inputStream = contentResolver.openInputStream(intent.data!!)
+            serializador.cargarQR(inputStream!!)
         } else {
             null
         }
