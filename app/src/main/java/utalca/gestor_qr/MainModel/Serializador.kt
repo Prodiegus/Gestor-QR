@@ -1,3 +1,5 @@
+package utalca.gestor_qr.MainModel
+
 import android.content.Context
 import android.os.Environment
 import android.util.Log
@@ -10,20 +12,29 @@ import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 
 class Serializador(private val context: Context) {
-    fun guardarQR(qr: QR, filename: String) {
-        val name = filename+".qr"
-        val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), name)
-        val fileOutputStream = FileOutputStream(file)
-        val objectOutputStream = ObjectOutputStream(fileOutputStream)
-        objectOutputStream.writeObject(qr)
-        objectOutputStream.close()
-        fileOutputStream.close()
+fun guardarQR(qr: QR, filename: String) {
+    var counter = 0
+    var name = "$filename.qr"
+    var file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), name)
 
-        val absolutePath = file.absolutePath
-
-        Log.d("Serializador", "QR guardado en $absolutePath")
-        Toast.makeText(context, "QR guardado en $absolutePath", Toast.LENGTH_SHORT).show()
+    // Verificar si el archivo ya existe
+    while (file.exists()) {
+        // Si el archivo ya existe, agregar "(counter)" al nombre del archivo
+        name = "$filename($counter).qr"
+        file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), name)
+        counter++
     }
+
+    val fileOutputStream = FileOutputStream(file)
+    val objectOutputStream = ObjectOutputStream(fileOutputStream)
+    objectOutputStream.writeObject(qr)
+    objectOutputStream.close()
+    fileOutputStream.close()
+
+    val absolutePath = file.absolutePath
+
+    Log.d("utalca.gestor_qr.MainModel.Serializador", "QR guardado en $absolutePath")
+}
 
     fun cargarQR(filename: String): QR? {
         val fileInputStream = context.openFileInput(filename)

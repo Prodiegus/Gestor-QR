@@ -1,6 +1,6 @@
 package utalca.gestor_qr
 
-import Serializador
+import utalca.gestor_qr.MainModel.Serializador
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
@@ -9,24 +9,22 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.Window
 import android.view.WindowManager
-import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import utalca.gestor_qr.MainModel.QR
 import utalca.gestor_qr.MainViews.VistaQr
+import java.io.File
 
 class VerQR : AppCompatActivity() {
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_ver_qr)
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val window: Window = this.getWindow()
@@ -41,30 +39,37 @@ class VerQR : AppCompatActivity() {
             insets
         }
 
-        val qr = intent.getSerializableExtra("qr")
-        if (qr == null) {
+        val serializador = Serializador(this)
+        val qr: QR? = if (intent.hasExtra("qr")) {
+            // Si el Intent contiene un extra "qr", obtenerlo y usarlo
+            intent.getSerializableExtra("qr") as? QR
+        } else if (intent.data != null) {
+            // Si el Intent contiene una URI de datos, deserializar el objeto QR del archivo en esa URI
+            val file = File(intent.data?.path)
+            serializador.cargarQR(file.name)
+        } else {
+            null
+        }
+
+        if (qr != null) {
+            // Si se obtuvo un objeto QR, mostrarlo en la actividad
+            val fragment = VistaQr.newInstance(qr)
+            supportFragmentManager.beginTransaction().replace(R.id.frame_QR_View, fragment).commit()
+            val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
+            setSupportActionBar(toolbar)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            supportActionBar?.setDisplayShowHomeEnabled(true)
+            supportActionBar?.setDisplayShowTitleEnabled(false)
+            supportActionBar?.setHomeAsUpIndicator(R.drawable.back_arrow)
+            val toolbarTitle = findViewById<TextView>(R.id.toolbar_title)
+            toolbarTitle.text = qr.getNombre()
+        } else {
+            // Si no se obtuvo un objeto QR, iniciar MainActivity
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             Log.d("VerQR", "MainActivity iniciada correctamente")
             finish()
-            return
         }
-        val qrAsQR = qr as QR
-        val fragment = VistaQr.newInstance(qrAsQR)
-        supportFragmentManager.beginTransaction().replace(R.id.frame_QR_View, fragment).commit()
-        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.back_arrow)
-
-        val serializador = Serializador(this)
-        serializador.guardarQR(qrAsQR, qrAsQR.getNombre()!!)
-
-        val toolbarTitle = findViewById<TextView>(R.id.toolbar_title)
-        toolbarTitle.text = qrAsQR.getNombre()
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

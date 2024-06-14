@@ -38,4 +38,8 @@ class QR  : Serializable {
     fun setLongitude(longitude: Double) {
         this.longitude = longitude
     }
+
+    override fun toString(): String {
+        return "QR(url=$url, nombre=$nombre, latitude=$latitude, longitude=$longitude)"
+    }
 }
