@@ -40,6 +40,7 @@ class VerQR : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.back_arrow)
 
         val serializador = Serializador(this)
         serializador.guardarQR(qr!!, qr!!.getNombre()!!)
@@ -62,5 +63,6 @@ class VerQR : AppCompatActivity() {
     private fun initMainActivity(){
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
+        finish()
     }
 }

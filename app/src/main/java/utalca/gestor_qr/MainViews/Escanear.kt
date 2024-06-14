@@ -98,11 +98,12 @@ class Escanear : Fragment() {
                     runBlocking {
                         val title = getTitulo(result.text)
                         qr = location?.let { QR(result.text, title, it.latitude, location!!.longitude) }
+                        abrirScanButton.text = "Abrir Escaneo"
+                        abrirScanButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.dark))
+                        abrirScanButton.textSize = 14f
                         abrirScanButton.visibility = View.VISIBLE
+                        barcodeView.pause()
                     }
-                    abrirScanButton.visibility = View.VISIBLE
-
-                    barcodeView.pause()
                 }
             }
 
@@ -138,6 +139,8 @@ class Escanear : Fragment() {
                 putExtra("qr", qr)
             }
             startActivity(intent)
+
+            activity?.finish()
         }
 }
 

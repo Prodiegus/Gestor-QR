@@ -302,8 +302,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="qrcode_www_figma_com__1_" />
-                            <entry key="sourceFile" value="C:\Users\diego\Downloads\qrcode_www.figma.com-_1_.svg" />
+                            <entry key="outputName" value="back_arrow" />
+                            <entry key="sourceFile" value="C:\Users\diego\Documents\Programas\Kotlin\Gestor-QR\app\img\back_arrow.svg" />
                           </map>
                         </option>
                       </PersistentState>
