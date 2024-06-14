@@ -22,9 +22,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Gestorqr"
         tools:targetApi="31">
-        <activity
-            android:name=".VerQR"
-            android:exported="false" />
+        <activity android:name=".VerQR" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="file" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern=".*\\.qr" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true">

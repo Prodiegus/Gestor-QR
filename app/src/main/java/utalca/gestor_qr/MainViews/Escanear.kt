@@ -1,12 +1,11 @@
 package utalca.gestor_qr.MainViews
 
-import Serializador
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import android.provider.CallLog.Locations
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +14,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.zxing.ResultPoint
@@ -23,14 +23,16 @@ import com.journeyapps.barcodescanner.BarcodeCallback
 import com.journeyapps.barcodescanner.BarcodeResult
 import com.journeyapps.barcodescanner.CompoundBarcodeView
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import utalca.gestor_qr.MainActivity
 import utalca.gestor_qr.MainModel.QR
 import utalca.gestor_qr.R
 import utalca.gestor_qr.VerQR
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -43,10 +45,9 @@ class Escanear : Fragment() {
     private lateinit var abrirScanButton: Button
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-    private var location: Location? = null
     private var url: String? = null
     private var content: String? = null
-    private var qr = location?.let { QR(url, content, it.latitude, location!!.longitude) }
+    private var qr = QR(url, content, -35.423244, -71.648483)
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -94,16 +95,19 @@ class Escanear : Fragment() {
         val callback = object : BarcodeCallback{
             override fun barcodeResult(result: BarcodeResult?) {
                 if (result != null) {
-                    getLocalizacion()
-                    runBlocking {
+                    lifecycleScope.launch {
+                        val location = getLocalizacion()
                         val title = getTitulo(result.text)
-                        qr = location?.let { QR(result.text, title, it.latitude, location!!.longitude) }
+                        qr =  QR(result.text, title, location!!.latitude, location!!.longitude)
+                        Log.d("Escanear", "QR: $qr")
                         abrirScanButton.text = "Abrir Escaneo"
                         abrirScanButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.dark))
                         abrirScanButton.textSize = 14f
                         abrirScanButton.visibility = View.VISIBLE
                         barcodeView.pause()
                     }
+                } else {
+                    Toast.makeText(requireContext(), "No se pudo escanear", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -123,10 +127,26 @@ class Escanear : Fragment() {
         abrirScanButton = view.findViewById(R.id.abrir_scan_button)
         abrirScanButton.setOnClickListener {
             if (qr != null) {
-                val intent = Intent(requireContext(), MainActivity::class.java).apply {
-                    putExtra("qr", qr)
+                val permissions = arrayOf(
+                    android.Manifest.permission.CAMERA,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION
+                )
+                val allPermissionsGranted = permissions.all {
+                    ActivityCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_GRANTED
                 }
-                startActivity(intent)
+                Log.d("Escanear", "Permisos: $allPermissionsGranted")
+                Log.d("Escanear", "QR: ${qr.toString()}")
+                if (!allPermissionsGranted) {
+                    requestPermissions(permissions, PERMISSIONS_REQUEST_CODE)
+                }else {
+                        val intent = Intent(requireContext(), MainActivity::class.java).apply {
+                            putExtra("qr", qr)
+                        }
+                        startActivity(intent)
+                        activity?.finish()
+                }
+            } else {
+                Toast.makeText(requireContext(), "No se pudo escanear", Toast.LENGTH_SHORT).show()
             }
 
             val intentIntegrator = IntentIntegrator.forSupportFragment(this)
@@ -168,29 +188,32 @@ class Escanear : Fragment() {
         }
     }
 
-    private fun getLocalizacion() {
+ private suspend fun getLocalizacion(): Location? {
+    return withContext(Dispatchers.IO) {
         if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             val manualLocation = Location("manual")
             manualLocation.latitude = -35.423244
             manualLocation.longitude = -71.648483
-            this.location = manualLocation
-            return
-        }
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location ->
-                if (location != null) {
-                    this.location = location
-                }
+            manualLocation
+        } else {
+            suspendCancellableCoroutine<Location?> { continuation ->
+                fusedLocationClient.lastLocation
+                    .addOnSuccessListener { location ->
+                        continuation.resume(location)
+                    }
+                    .addOnFailureListener { exception ->
+                        continuation.resumeWithException(exception)
+                    }
             }
+        }
     }
+}
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
             PERMISSIONS_REQUEST_CODE -> {
                 val allPermissionsGranted = grantResults.all { it == PackageManager.PERMISSION_GRANTED }
-                if (allPermissionsGranted) {
-                    getLocalizacion()
-                } else {
+                if (!allPermissionsGranted) {
                     Toast.makeText(requireContext(), "Todos los permisos necesarios no fueron concedidos", Toast.LENGTH_SHORT).show()
                 }
                 return
