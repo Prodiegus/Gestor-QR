@@ -2,10 +2,12 @@ package utalca.gestor_qr.MainModel
 
 import android.content.Context
 import android.os.Environment
+import android.util.Base64
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContentProviderCompat.requireContext
 import utalca.gestor_qr.MainModel.QR
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -58,6 +60,14 @@ class Serializador(private val context: Context) {
         }
 
         return qrList
+    }
+    fun serializarQRToFile(qr: QR, filename: String): File {
+        val file = File(context.cacheDir, filename)
+        val fileOutputStream = FileOutputStream(file)
+        val objectOutputStream = ObjectOutputStream(fileOutputStream)
+        objectOutputStream.writeObject(qr)
+        objectOutputStream.close()
+        return file
     }
     fun cargarQR(inputStream: InputStream): QR? {
         return try {

@@ -302,8 +302,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="map" />
-                            <entry key="sourceFile" value="C:\Users\diego\Documents\Programas\Kotlin\Gestor-QR\app\img\map.svg" />
+                            <entry key="outputName" value="share" />
+                            <entry key="sourceFile" value="C:\Users\diego\Documents\Programas\Kotlin\Gestor-QR\app\img\share.svg" />
                           </map>
                         </option>
                       </PersistentState>

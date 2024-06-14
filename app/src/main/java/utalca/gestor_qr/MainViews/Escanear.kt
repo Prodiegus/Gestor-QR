@@ -48,16 +48,20 @@ class Escanear : Fragment() {
     private var url: String? = null
     private var content: String? = null
     private var qr = QR(url, content, -35.423244, -71.648483)
+    private var isScanning = false
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null) {
             if (result.contents == null) {
-                Toast.makeText( this.context, "No se pudo", Toast.LENGTH_LONG).show()
+                Toast.makeText(activity, "Cancelled", Toast.LENGTH_LONG).show()
             } else {
-                content = result.contents
+                Toast.makeText(activity, "Scanned: " + result.contents, Toast.LENGTH_LONG).show()
             }
+            // Finalizar la actividad después de recibir el resultado del escaneo
+            activity?.finish()
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
         }
     }
 
@@ -127,6 +131,7 @@ class Escanear : Fragment() {
         abrirScanButton = view.findViewById(R.id.abrir_scan_button)
         abrirScanButton.setOnClickListener {
             if (qr != null) {
+
                 val permissions = arrayOf(
                     android.Manifest.permission.CAMERA,
                     android.Manifest.permission.ACCESS_FINE_LOCATION
@@ -143,6 +148,8 @@ class Escanear : Fragment() {
                             putExtra("qr", qr)
                         }
                         startActivity(intent)
+                        barcodeView.pause()
+                        parentFragmentManager.popBackStack()
                         activity?.finish()
                 }
             } else {

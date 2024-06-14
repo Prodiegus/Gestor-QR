@@ -1,11 +1,11 @@
 package utalca.gestor_qr
 
 import utalca.gestor_qr.MainModel.Serializador
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.Window
 import android.view.WindowManager
@@ -14,11 +14,11 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import utalca.gestor_qr.MainModel.QR
 import utalca.gestor_qr.MainViews.VistaQr
-import java.io.File
 
 class VerQR : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,13 +75,35 @@ class VerQR : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                initMainActivity()
+               finish()
+                true
+            }
+            R.id.share -> {
+                val qr = intent.getSerializableExtra("qr") as QR
+                if (qr != null) {
+                    val serializador = Serializador(this)
+                    val qrFile = serializador.serializarQRToFile(qr, qr.getNombre()+".qr")
+                    val uri = FileProvider.getUriForFile(this,  this.applicationContext.packageName + ".provider", qrFile)
+                    val sendIntent: Intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_STREAM, uri)
+                        type = "application/octet-stream"
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                    val shareIntent = Intent.createChooser(sendIntent, "Compartir QR")
+                    startActivity(shareIntent)
+                } else {
+                    Toast.makeText(this, "No hay un QR para compartir", Toast.LENGTH_SHORT).show()
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
-
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.toolbar_menu, menu)
+        return true
+    }
     private fun initMainActivity(){
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
