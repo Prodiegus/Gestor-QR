@@ -1,8 +1,11 @@
 package utalca.gestor_qr
 
+import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.widget.RelativeLayout
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -20,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     private val escanear = Escanear()
     private val crear = Crear()
     private val historial = Historial()
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -27,6 +31,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         window.statusBarColor = resources.getColor(R.color.primary)
+        window.navigationBarColor = resources.getColor(R.color.primary)
+
 
         val navigationView = findViewById<BottomNavigationView>(R.id.navigation)
         navigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
