@@ -51,7 +51,7 @@
 
     <style name="OutlineBox" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
         <item name="boxStrokeColor">@color/dark</item>
-        <item name="boxStrokeWidth">2dp</item>
+        <item name="boxStrokeWidth">1dp</item>
         <item name="boxBackgroundColor">@color/ligth</item>
     </style>
 
