@@ -48,4 +48,14 @@
     <style name="VerQRFragmet">
         <item name="android:background">@color/white</item>
     </style>
+
+    <style name="OutlineBox" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="boxStrokeColor">@color/dark</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="boxBackgroundColor">@color/ligth</item>
+    </style>
+
+    <style name="OutlineBoxText" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="android:textColor">@color/dark</item>
+    </style>
 </resources>

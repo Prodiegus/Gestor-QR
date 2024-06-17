@@ -29,6 +29,7 @@ import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import utalca.gestor_qr.MainActivity
 import utalca.gestor_qr.MainModel.QR
+import utalca.gestor_qr.MainModel.Serializador
 import utalca.gestor_qr.R
 import utalca.gestor_qr.VerQR
 import kotlin.coroutines.resume
@@ -160,6 +161,9 @@ class Escanear : Fragment() {
             intentIntegrator.setOrientationLocked(false)
             intentIntegrator.setPrompt("")
             intentIntegrator.initiateScan()
+
+            val serializador = Serializador(requireContext())
+            serializador.guardarQR(qr, qr.getNombre()!!)
 
             // Iniciar la nueva actividad
             val intent = Intent(requireContext(), VerQR::class.java).apply {

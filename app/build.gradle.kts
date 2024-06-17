@@ -46,6 +46,9 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.material3.android)
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation ("com.google.android.material:material:1.5.0-alpha05")
+    implementation("com.google.android.material:material:1.4.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.2")
     implementation("com.journeyapps:zxing-android-embedded:4.1.0") {
         isTransitive = false
