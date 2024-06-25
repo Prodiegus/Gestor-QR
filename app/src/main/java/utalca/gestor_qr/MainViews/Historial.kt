@@ -8,10 +8,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import utalca.gestor_qr.MainModel.ListAdapter
 import utalca.gestor_qr.MainModel.QR
 import utalca.gestor_qr.MainModel.Serializador
@@ -47,9 +46,10 @@ class Historial : Fragment(), ListAdapter.OnItemClickListener {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_historial, container, false)
 
-        val myDataset = Serializador(requireContext()).cargarQR()
+        var myDataset = Serializador(requireContext()).cargarQR()
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.lista_historial)
+        val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh_layout)
         val searchView = view.findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.search_view)
 
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -59,6 +59,11 @@ class Historial : Fragment(), ListAdapter.OnItemClickListener {
         searchView.isHintEnabled = false
         val editText = searchView.editText
         editText?.clearFocus()
+        swipeRefreshLayout.setOnRefreshListener {
+            myDataset = Serializador(requireContext()).cargarQR()
+            adapter.setList(myDataset)
+            swipeRefreshLayout.isRefreshing = false
+        }
         editText?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
                 // Do something before text changes

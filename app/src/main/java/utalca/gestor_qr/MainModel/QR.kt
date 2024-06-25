@@ -7,11 +7,14 @@ class QR  : Serializable {
     private var nombre: String? = null
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
+    private var date: Long
+
     constructor(url: String?, nombre: String?, latitude: Double, longitude: Double) {
         this.url = url
         this.nombre = nombre
         this.latitude = latitude
         this.longitude = longitude
+        this.date = System.currentTimeMillis()
     }
 
     fun getUrl(): String? {
@@ -26,6 +29,11 @@ class QR  : Serializable {
     fun getLongitude(): Double {
         return longitude
     }
+
+    fun getDate(): Long {
+        return date
+    }
+
     fun setUrl(url: String?) {
         this.url = url
     }

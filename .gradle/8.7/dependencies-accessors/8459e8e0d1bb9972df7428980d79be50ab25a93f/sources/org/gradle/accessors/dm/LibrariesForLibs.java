@@ -136,6 +136,16 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
         }
 
         /**
+         * Dependency provider for <b>swiperefreshlayout</b> with <b>androidx.swiperefreshlayout:swiperefreshlayout</b> coordinates and
+         * with version reference <b>swiperefreshlayout</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         */
+        public Provider<MinimalExternalModuleDependency> getSwiperefreshlayout() {
+            return create("androidx.swiperefreshlayout");
+        }
+
+        /**
          * Group of libraries at <b>androidx.core</b>
          */
         public AndroidxCoreLibraryAccessors getCore() {
@@ -251,7 +261,7 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
         public Provider<String> getActivity() { return getVersion("activity"); }
 
         /**
-         * Version alias <b>agp</b> with value <b>8.4.0</b>
+         * Version alias <b>agp</b> with value <b>8.5.0</b>
          * <p>
          * If the version is a rich version and cannot be represented as a
          * single version string, an empty string is returned.
@@ -359,6 +369,16 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
          * This version was declared in catalog libs.versions.toml
          */
         public Provider<String> getPlayServicesLocation() { return getVersion("playServicesLocation"); }
+
+        /**
+         * Version alias <b>swiperefreshlayout</b> with value <b>1.1.0</b>
+         * <p>
+         * If the version is a rich version and cannot be represented as a
+         * single version string, an empty string is returned.
+         * <p>
+         * This version was declared in catalog libs.versions.toml
+         */
+        public Provider<String> getSwiperefreshlayout() { return getVersion("swiperefreshlayout"); }
 
     }
 
