@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.material3.android)
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation ("com.google.android.material:material:1.5.0-alpha05")
     implementation("com.google.android.material:material:1.4.0")
