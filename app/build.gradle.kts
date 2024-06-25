@@ -58,6 +58,7 @@ dependencies {
     implementation ("com.google.zxing:core:3.3.0")
     implementation("org.jsoup:jsoup:1.14.3")
     implementation(libs.play.services.location)
+    implementation(libs.androidx.swiperefreshlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
