@@ -1,13 +1,19 @@
 package utalca.gestor_qr.MainViews
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.PopupWindow
+import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -78,21 +84,57 @@ class Historial : Fragment(), ListAdapter.OnItemClickListener {
                 // Do something after text changes
             }
         })
+
+        val filterButton = view.findViewById<ImageButton>(R.id.search_icon)
+        filterButton.setOnClickListener {
+            showPopup(view)
+        }
+
         return view
     }
 
-        fun filter(models: List<QR>, query: String?): List<QR> {
-            val lowerCaseQuery = query?.toLowerCase()
+    private fun showPopup(anchorView: View) {
+        val popupView = layoutInflater.inflate(R.layout.popup_filter, null)
+        val popupWindow = PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true)
 
-            val filteredModelList = ArrayList<QR>()
-            for (model in models) {
-                val text = model.getNombre()!!.toLowerCase()
-                if (lowerCaseQuery != null && text.contains(lowerCaseQuery)) {
-                    filteredModelList.add(model)
-                }
-            }
-            return filteredModelList
+        // Configurar la acción al hacer clic en el icono de Google Drive
+        val driveIcon = popupView.findViewById<ImageView>(R.id.drive_icon)
+        driveIcon.setOnClickListener {
+            openGoogleDrive()
+            popupWindow.dismiss()
         }
+
+        // Mostrar el popup centrado
+        popupWindow.showAtLocation(anchorView, Gravity.CENTER, 0, 0)
+    }
+
+    private fun openGoogleDrive() {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse("https://drive.google.com")
+            setPackage("com.google.android.apps.docs")
+        }
+        if (intent.resolveActivity(requireActivity().packageManager) != null) {
+            startActivity(intent)
+        } else {
+            // Manejar el caso en que Google Drive no esté instalado
+            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://drive.google.com"))
+            startActivity(webIntent)
+        }
+    }
+
+    private fun filter(models: List<QR>, query: String?): List<QR> {
+        val lowerCaseQuery = query?.toLowerCase()
+
+        val filteredModelList = ArrayList<QR>()
+        for (model in models) {
+            val text = model.getNombre()!!.toLowerCase()
+            if (lowerCaseQuery != null && text.contains(lowerCaseQuery)) {
+                filteredModelList.add(model)
+            }
+        }
+        return filteredModelList
+    }
+
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -102,7 +144,6 @@ class Historial : Fragment(), ListAdapter.OnItemClickListener {
          * @param param2 Parameter 2.
          * @return A new instance of fragment Historial.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             Historial().apply {
