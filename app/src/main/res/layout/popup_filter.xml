@@ -6,19 +6,126 @@
     android:padding="16dp"
     android:background="@drawable/popup_background">
 
-    <ImageView
-        android:id="@+id/drive_icon"
+    <TextView
+        android:id="@+id/configuracion_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_google_drive"
-        android:contentDescription="@string/google_drive" />
+        android:text="Configuracion"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"/>
 
     <TextView
-        android:id="@+id/drive_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/google_drive"
+        android:text="Orden"
         android:textSize="16sp"
-        android:layout_marginTop="8dp"
-        android:gravity="center" />
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp">
+
+        <RadioButton
+            android:id="@+id/orden_nombre_ascendente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nombre ascendente"/>
+
+        <RadioButton
+            android:id="@+id/orden_nombre_descendente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nombre descendente"/>
+
+        <RadioButton
+            android:id="@+id/orden_fecha_ascendente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fecha ascendente"/>
+
+        <RadioButton
+            android:id="@+id/orden_fecha_descendente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fecha descendente"/>
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Filtro"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Lugar">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/filtro_lugar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Google Drive"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/sincronizar_drive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sincronizar"
+            android:background="?android:attr/selectableItemBackground"
+            android:paddingEnd="8dp"/>
+
+        <ImageView
+            android:id="@+id/drive_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_google_drive"
+            android:contentDescription="@string/google_drive"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/cancelar_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cancelar"
+            android:backgroundTint="@color/secondary"/>
+
+        <Button
+            android:id="@+id/aplicar_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Aplicar"
+            android:backgroundTint="@color/primary"/>
+    </LinearLayout>
+
 </LinearLayout>

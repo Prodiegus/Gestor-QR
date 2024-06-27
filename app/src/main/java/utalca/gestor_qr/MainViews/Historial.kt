@@ -9,14 +9,19 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.PopupWindow
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import utalca.gestor_qr.MainModel.ListAdapter
 import utalca.gestor_qr.MainModel.QR
 import utalca.gestor_qr.MainModel.Serializador
@@ -97,14 +102,23 @@ class Historial : Fragment(), ListAdapter.OnItemClickListener {
         val popupView = layoutInflater.inflate(R.layout.popup_filter, null)
         val popupWindow = PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true)
 
-        // Configurar la acción al hacer clic en el icono de Google Drive
-        val driveIcon = popupView.findViewById<ImageView>(R.id.drive_icon)
-        driveIcon.setOnClickListener {
+        val sincronizarButton = popupView.findViewById<Button>(R.id.sincronizar_drive)
+        sincronizarButton.setOnClickListener {
             openGoogleDrive()
             popupWindow.dismiss()
         }
 
-        // Mostrar el popup centrado
+        val cancelarButton = popupView.findViewById<Button>(R.id.cancelar_button)
+        cancelarButton.setOnClickListener {
+            popupWindow.dismiss()
+        }
+
+        val aplicarButton = popupView.findViewById<Button>(R.id.aplicar_button)
+        aplicarButton.setOnClickListener {
+            // Aquí puedes manejar la lógica para aplicar los filtros
+            popupWindow.dismiss()
+        }
+
         popupWindow.showAtLocation(anchorView, Gravity.CENTER, 0, 0)
     }
 
