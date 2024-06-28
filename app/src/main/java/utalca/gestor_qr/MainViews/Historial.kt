@@ -11,16 +11,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.PopupWindow
-import android.widget.RadioButton
 import android.widget.RadioGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import utalca.gestor_qr.MainModel.ListAdapter
 import utalca.gestor_qr.MainModel.QR
@@ -28,20 +24,14 @@ import utalca.gestor_qr.MainModel.Serializador
 import utalca.gestor_qr.R
 import utalca.gestor_qr.VerQR
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [Historial.newInstance] factory method to
- * create an instance of this fragment.
- */
 class Historial : Fragment(), ListAdapter.OnItemClickListener {
-    // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private lateinit var myDataset: List<QR>
+    private lateinit var adapter: ListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,14 +47,14 @@ class Historial : Fragment(), ListAdapter.OnItemClickListener {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_historial, container, false)
 
-        var myDataset = Serializador(requireContext()).cargarQR()
+        myDataset = Serializador(requireContext()).cargarQR()
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.lista_historial)
         val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh_layout)
-        val searchView = view.findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.search_view)
+        val searchView = view.findViewById<TextInputLayout>(R.id.search_view)
 
         recyclerView.layoutManager = LinearLayoutManager(context)
-        val adapter = ListAdapter(myDataset, this)
+        adapter = ListAdapter(myDataset, this)
         recyclerView.adapter = adapter
 
         searchView.isHintEnabled = false
@@ -115,7 +105,17 @@ class Historial : Fragment(), ListAdapter.OnItemClickListener {
 
         val aplicarButton = popupView.findViewById<Button>(R.id.aplicar_button)
         aplicarButton.setOnClickListener {
-            // Aquí puedes manejar la lógica para aplicar los filtros
+            val radioGroup = popupView.findViewById<RadioGroup>(R.id.radio_group)
+            val selectedId = radioGroup.checkedRadioButtonId
+
+            val sortBy = when (selectedId) {
+                R.id.orden_nombre_ascendente -> "name_asc"
+                R.id.orden_nombre_descendente -> "name_desc"
+                else -> ""
+            }
+
+            myDataset = sortList(myDataset, sortBy)
+            adapter.setList(myDataset)
             popupWindow.dismiss()
         }
 
@@ -130,7 +130,6 @@ class Historial : Fragment(), ListAdapter.OnItemClickListener {
         if (intent.resolveActivity(requireActivity().packageManager) != null) {
             startActivity(intent)
         } else {
-            // Manejar el caso en que Google Drive no esté instalado
             val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://drive.google.com"))
             startActivity(webIntent)
         }
@@ -138,26 +137,25 @@ class Historial : Fragment(), ListAdapter.OnItemClickListener {
 
     private fun filter(models: List<QR>, query: String?): List<QR> {
         val lowerCaseQuery = query?.toLowerCase()
-
         val filteredModelList = ArrayList<QR>()
         for (model in models) {
-            val text = model.getNombre()!!.toLowerCase()
-            if (lowerCaseQuery != null && text.contains(lowerCaseQuery)) {
+            val text = model.getNombre()?.toLowerCase()
+            if (lowerCaseQuery != null && text != null && text.contains(lowerCaseQuery)) {
                 filteredModelList.add(model)
             }
         }
         return filteredModelList
     }
 
+    private fun sortList(models: List<QR>, sortBy: String): List<QR> {
+        return when (sortBy) {
+            "name_asc" -> models.sortedBy { it.getNombre() ?: "" }
+            "name_desc" -> models.sortedByDescending { it.getNombre() ?: "" }
+            else -> models
+        }
+    }
+
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment Historial.
-         */
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             Historial().apply {
