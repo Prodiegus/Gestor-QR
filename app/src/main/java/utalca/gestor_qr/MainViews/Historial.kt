@@ -90,7 +90,15 @@ class Historial : Fragment(), ListAdapter.OnItemClickListener {
 
     private fun showPopup(anchorView: View) {
         val popupView = layoutInflater.inflate(R.layout.popup_filter, null)
-        val popupWindow = PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true)
+
+        // Obtén el ancho de la pantalla
+        val displayMetrics = resources.displayMetrics
+        val screenWidth = displayMetrics.widthPixels
+
+        // Calcula el 70% del ancho de la pantalla
+        val popupWidth = (screenWidth * 0.7).toInt()
+
+        val popupWindow = PopupWindow(popupView, popupWidth, ViewGroup.LayoutParams.WRAP_CONTENT, true)
 
         val sincronizarButton = popupView.findViewById<Button>(R.id.sincronizar_drive)
         sincronizarButton.setOnClickListener {
@@ -123,6 +131,7 @@ class Historial : Fragment(), ListAdapter.OnItemClickListener {
 
         popupWindow.showAtLocation(anchorView, Gravity.CENTER, 0, 0)
     }
+
 
     private fun openGoogleDrive() {
         val intent = Intent(Intent.ACTION_VIEW).apply {

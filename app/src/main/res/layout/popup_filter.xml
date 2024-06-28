@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp"
@@ -88,22 +88,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="center"
+        android:background="@drawable/border_button"
+        android:padding="8dp"
+        android:layout_gravity="center_horizontal"> <!-- Centra este LinearLayout horizontalmente -->
 
         <Button
             android:id="@+id/sincronizar_drive"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Sincronizar"
-            android:background="?android:attr/selectableItemBackground"
-            android:paddingEnd="8dp"/>
+            android:background="@android:color/transparent"
+            android:paddingEnd="8dp"
+            android:layout_gravity="center_vertical"/>
 
         <ImageView
             android:id="@+id/drive_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_google_drive"
-            android:contentDescription="@string/google_drive"/>
+            android:contentDescription="@string/google_drive"
+            android:layout_gravity="center_vertical"/>
     </LinearLayout>
 
     <LinearLayout
