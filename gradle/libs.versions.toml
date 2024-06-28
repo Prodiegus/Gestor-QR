@@ -12,6 +12,7 @@ constraintlayout = "2.1.4"
 material3Android = "1.2.1"
 playServicesLocation = "21.3.0"
 swiperefreshlayout = "1.1.0"
+playServicesDrive = "17.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -25,6 +26,7 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
+play-services-drive = { group = "com.google.android.gms", name = "play-services-drive", version.ref = "playServicesDrive" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

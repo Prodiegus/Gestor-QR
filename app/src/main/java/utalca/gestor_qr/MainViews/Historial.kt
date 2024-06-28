@@ -1,10 +1,10 @@
 package utalca.gestor_qr.MainViews
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -13,21 +13,34 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.PopupWindow
 import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.Scope
+import com.google.android.gms.tasks.Task
 import com.google.android.material.textfield.TextInputLayout
+import com.google.api.services.drive.DriveScopes
+import utalca.gestor_qr.MainModel.DriveServiceHelper
 import utalca.gestor_qr.MainModel.ListAdapter
 import utalca.gestor_qr.MainModel.QR
 import utalca.gestor_qr.MainModel.Serializador
 import utalca.gestor_qr.R
 import utalca.gestor_qr.VerQR
+import kotlin.math.log
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
 class Historial : Fragment(), ListAdapter.OnItemClickListener {
+    private lateinit var googleSignInClient: GoogleSignInClient
+    private val RC_SIGN_IN = 1001
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var myDataset: List<QR>
@@ -91,12 +104,10 @@ class Historial : Fragment(), ListAdapter.OnItemClickListener {
     private fun showPopup(anchorView: View) {
         val popupView = layoutInflater.inflate(R.layout.popup_filter, null)
 
-        // Obtén el ancho de la pantalla
         val displayMetrics = resources.displayMetrics
         val screenWidth = displayMetrics.widthPixels
 
-        // Calcula el 70% del ancho de la pantalla
-        val popupWidth = (screenWidth * 0.7).toInt()
+        val popupWidth = (screenWidth * 0.9).toInt()
 
         val popupWindow = PopupWindow(popupView, popupWidth, ViewGroup.LayoutParams.WRAP_CONTENT, true)
 
@@ -134,16 +145,14 @@ class Historial : Fragment(), ListAdapter.OnItemClickListener {
 
 
     private fun openGoogleDrive() {
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            data = Uri.parse("https://drive.google.com")
-            setPackage("com.google.android.apps.docs")
-        }
-        if (intent.resolveActivity(requireActivity().packageManager) != null) {
-            startActivity(intent)
-        } else {
-            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://drive.google.com"))
-            startActivity(webIntent)
-        }
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .requestScopes(Scope(DriveScopes.DRIVE_FILE))
+            .build()
+
+        googleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
+        val signInIntent = googleSignInClient.signInIntent
+        startActivityForResult(signInIntent, RC_SIGN_IN)
     }
 
     private fun filter(models: List<QR>, query: String?): List<QR> {
@@ -156,6 +165,41 @@ class Historial : Fragment(), ListAdapter.OnItemClickListener {
             }
         }
         return filteredModelList
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            handleSignInResult(task)
+        }
+    }
+
+    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+        try {
+            val account = completedTask.getResult(ApiException::class.java)
+            val idToken = account?.idToken
+            val driveServiceHelper = DriveServiceHelper(requireContext(), account!!)
+            val serializador = Serializador(requireContext())
+            val QRs = driveServiceHelper.getFile()
+            for (qr in QRs) {
+                serializador.guardarQR(qr, qr.getNombre() ?: "")
+            }
+            for (qr in myDataset) {
+                driveServiceHelper.uploadFile(qr, "application/octet-stream")
+            }
+            myDataset = Serializador(requireContext()).cargarQR()
+            adapter.setList(myDataset)
+            Toast.makeText(requireContext(), "Sincronización con Google Drive exitosa", Toast.LENGTH_SHORT).show()
+        } catch (e: ApiException) {
+           Log.e("Error", "signInResult:failed code=" + e.statusCode)
+            Log.e("Error", "signInResult:failed message=" + e.message)
+            Log.e("Error", "signInResult:failed cause=" + e.cause)
+            Log.e("Error", "signInResult:failed localizedMessage=" + e.localizedMessage)
+            Log.e("Error", "signInResult:failed stackTrace=" + e.stackTrace)
+            Log.e("Error", "signInResult:failed supressed=" + e.suppressed)
+            Toast.makeText(requireContext(), "Error al sincronizar con Google Drive", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun sortList(models: List<QR>, sortBy: String): List<QR> {
