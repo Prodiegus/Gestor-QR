@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Environment
 import android.util.Log
-import utalca.gestor_qr.MainModel.QR
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -74,6 +74,15 @@ class Serializador(private val context: Context) {
             objectOutputStream.writeObject(qr)
             objectOutputStream.close()
             return file
+        }
+
+        fun outputFileToQR(file: File): QR? {
+            val fileInputStream = FileInputStream(file)
+            val objectInputStream = ObjectInputStream(fileInputStream)
+            val qr = objectInputStream.readObject() as? QR
+            objectInputStream.close()
+            fileInputStream.close()
+            return qr
         }
 
         fun cargarQR(inputStream: InputStream): QR? {

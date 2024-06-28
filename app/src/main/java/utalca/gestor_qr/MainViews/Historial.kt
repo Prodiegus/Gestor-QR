@@ -4,33 +4,47 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
+import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageButton
+import android.widget.PopupWindow
+import android.widget.RadioGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.Scope
+import com.google.android.gms.tasks.Task
+import com.google.android.material.textfield.TextInputLayout
+import com.google.api.services.drive.DriveScopes
+import utalca.gestor_qr.MainModel.DriveServiceHelper
 import utalca.gestor_qr.MainModel.ListAdapter
 import utalca.gestor_qr.MainModel.QR
 import utalca.gestor_qr.MainModel.Serializador
 import utalca.gestor_qr.R
 import utalca.gestor_qr.VerQR
+import kotlin.math.log
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [Historial.newInstance] factory method to
- * create an instance of this fragment.
- */
 class Historial : Fragment(), ListAdapter.OnItemClickListener {
-    // TODO: Rename and change types of parameters
+    private lateinit var googleSignInClient: GoogleSignInClient
+    private val RC_SIGN_IN = 1001
     private var param1: String? = null
     private var param2: String? = null
+    private lateinit var myDataset: List<QR>
+    private lateinit var adapter: ListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,14 +60,14 @@ class Historial : Fragment(), ListAdapter.OnItemClickListener {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_historial, container, false)
 
-        var myDataset = Serializador(requireContext()).cargarQR()
+        myDataset = Serializador(requireContext()).cargarQR()
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.lista_historial)
         val swipeRefreshLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipe_refresh_layout)
-        val searchView = view.findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.search_view)
+        val searchView = view.findViewById<TextInputLayout>(R.id.search_view)
 
         recyclerView.layoutManager = LinearLayoutManager(context)
-        val adapter = ListAdapter(myDataset, this)
+        adapter = ListAdapter(myDataset, this)
         recyclerView.adapter = adapter
 
         searchView.isHintEnabled = false
@@ -78,31 +92,127 @@ class Historial : Fragment(), ListAdapter.OnItemClickListener {
                 // Do something after text changes
             }
         })
+
+        val filterButton = view.findViewById<ImageButton>(R.id.search_icon)
+        filterButton.setOnClickListener {
+            showPopup(view)
+        }
+
         return view
     }
 
-        fun filter(models: List<QR>, query: String?): List<QR> {
-            val lowerCaseQuery = query?.toLowerCase()
+    private fun showPopup(anchorView: View) {
+        val popupView = layoutInflater.inflate(R.layout.popup_filter, null)
 
-            val filteredModelList = ArrayList<QR>()
-            for (model in models) {
-                val text = model.getNombre()!!.toLowerCase()
-                if (lowerCaseQuery != null && text.contains(lowerCaseQuery)) {
-                    filteredModelList.add(model)
-                }
-            }
-            return filteredModelList
+        val displayMetrics = resources.displayMetrics
+        val screenWidth = displayMetrics.widthPixels
+
+        val popupWidth = (screenWidth * 0.9).toInt()
+
+        val popupWindow = PopupWindow(popupView, popupWidth, ViewGroup.LayoutParams.WRAP_CONTENT, true)
+
+        val sincronizarButton = popupView.findViewById<Button>(R.id.sincronizar_drive)
+        sincronizarButton.setOnClickListener {
+            openGoogleDrive()
+            popupWindow.dismiss()
         }
+
+        val cancelarButton = popupView.findViewById<Button>(R.id.cancelar_button)
+        cancelarButton.setOnClickListener {
+            popupWindow.dismiss()
+        }
+
+        val aplicarButton = popupView.findViewById<Button>(R.id.aplicar_button)
+        aplicarButton.setOnClickListener {
+            val radioGroup = popupView.findViewById<RadioGroup>(R.id.radio_group)
+            val selectedId = radioGroup.checkedRadioButtonId
+
+            val sortBy = when (selectedId) {
+                R.id.orden_nombre_ascendente -> "name_asc"
+                R.id.orden_nombre_descendente -> "name_desc"
+                R.id.orden_fecha_ascendente -> "date_asc"
+                R.id.orden_fecha_descendente -> "date_desc"
+                else -> ""
+            }
+
+            myDataset = sortList(myDataset, sortBy)
+            adapter.setList(myDataset)
+            popupWindow.dismiss()
+        }
+
+        popupWindow.showAtLocation(anchorView, Gravity.CENTER, 0, 0)
+    }
+
+
+    private fun openGoogleDrive() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .requestScopes(Scope(DriveScopes.DRIVE_FILE))
+            .build()
+
+        googleSignInClient = GoogleSignIn.getClient(requireContext(), gso)
+        val signInIntent = googleSignInClient.signInIntent
+        startActivityForResult(signInIntent, RC_SIGN_IN)
+    }
+
+    private fun filter(models: List<QR>, query: String?): List<QR> {
+        val lowerCaseQuery = query?.toLowerCase()
+        val filteredModelList = ArrayList<QR>()
+        for (model in models) {
+            val text = model.getNombre()?.toLowerCase()
+            if (lowerCaseQuery != null && text != null && text.contains(lowerCaseQuery)) {
+                filteredModelList.add(model)
+            }
+        }
+        return filteredModelList
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            handleSignInResult(task)
+        }
+    }
+
+    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+        try {
+            val account = completedTask.getResult(ApiException::class.java)
+            val idToken = account?.idToken
+            val driveServiceHelper = DriveServiceHelper(requireContext(), account!!)
+            val serializador = Serializador(requireContext())
+            val QRs = driveServiceHelper.getFile()
+            for (qr in QRs) {
+                serializador.guardarQR(qr, qr.getNombre() ?: "")
+            }
+            for (qr in myDataset) {
+                driveServiceHelper.uploadFile(qr, "application/octet-stream")
+            }
+            myDataset = Serializador(requireContext()).cargarQR()
+            adapter.setList(myDataset)
+            Toast.makeText(requireContext(), "Sincronización con Google Drive exitosa", Toast.LENGTH_SHORT).show()
+        } catch (e: ApiException) {
+           Log.e("Error", "signInResult:failed code=" + e.statusCode)
+            Log.e("Error", "signInResult:failed message=" + e.message)
+            Log.e("Error", "signInResult:failed cause=" + e.cause)
+            Log.e("Error", "signInResult:failed localizedMessage=" + e.localizedMessage)
+            Log.e("Error", "signInResult:failed stackTrace=" + e.stackTrace)
+            Log.e("Error", "signInResult:failed supressed=" + e.suppressed)
+            Toast.makeText(requireContext(), "Error al sincronizar con Google Drive", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun sortList(models: List<QR>, sortBy: String): List<QR> {
+        return when (sortBy) {
+            "name_asc" -> models.sortedBy { it.getNombre() ?: "" }
+            "name_desc" -> models.sortedByDescending { it.getNombre() ?: "" }
+            "date_asc" -> models.sortedBy { it.getDate() }
+            "date_desc" -> models.sortedByDescending { it.getDate() }
+            else -> models
+        }
+    }
+
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment Historial.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             Historial().apply {

@@ -7,5 +7,8 @@
     <color name="dark">#1F3A4A</color>
     <color name="black">#1C1C1C</color>
     <color name="white">#F1F1F1</color>
+    <color name="red">#F44336</color>
+    <color name="blue">#2196F3</color>
+    <color name="button_background">#6200EE</color>
     <color name="primary_transparent">#403097AD</color>
 </resources>
