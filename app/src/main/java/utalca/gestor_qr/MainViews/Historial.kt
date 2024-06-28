@@ -111,6 +111,8 @@ class Historial : Fragment(), ListAdapter.OnItemClickListener {
             val sortBy = when (selectedId) {
                 R.id.orden_nombre_ascendente -> "name_asc"
                 R.id.orden_nombre_descendente -> "name_desc"
+                R.id.orden_fecha_ascendente -> "date_asc"
+                R.id.orden_fecha_descendente -> "date_desc"
                 else -> ""
             }
 
@@ -151,6 +153,8 @@ class Historial : Fragment(), ListAdapter.OnItemClickListener {
         return when (sortBy) {
             "name_asc" -> models.sortedBy { it.getNombre() ?: "" }
             "name_desc" -> models.sortedByDescending { it.getNombre() ?: "" }
+            "date_asc" -> models.sortedBy { it.getDate() }
+            "date_desc" -> models.sortedByDescending { it.getDate() }
             else -> models
         }
     }
