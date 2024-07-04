@@ -65,6 +65,8 @@ dependencies {
     implementation ("de.hdodenhof:circleimageview:3.1.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation ("com.google.android.material:material:1.5.0-alpha05")
+    implementation("com.google.android.gms:play-services-auth:20.0.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
     implementation("com.google.android.material:material:1.4.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.2")
     implementation( "com.google.api-client:google-api-client:1.31.5")
