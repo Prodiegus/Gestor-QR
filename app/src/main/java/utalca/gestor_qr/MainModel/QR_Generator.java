@@ -19,29 +19,29 @@ import utalca.gestor_qr.R;
 
 public class QR_Generator {
     public Bitmap generateQRCode(String url, Context context) {
-    QRCodeWriter qrCodeWriter = new QRCodeWriter();
-    try {
-        Map<EncodeHintType, Object> hints = new HashMap<>();
-        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
-        hints.put(EncodeHintType.MARGIN, 0); // Reduce el margen del QR
-        BitMatrix bitMatrix = qrCodeWriter.encode(url, BarcodeFormat.QR_CODE, 500, 500, hints); // Aumenta el tamaño del QR
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        try {
+            Map<EncodeHintType, Object> hints = new HashMap<>();
+            hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
+            hints.put(EncodeHintType.MARGIN, 0); // Reduce el margen del QR
+            BitMatrix bitMatrix = qrCodeWriter.encode(url, BarcodeFormat.QR_CODE, 500, 500, hints); // Aumenta el tamaño del QR
 
-        int width = bitMatrix.getWidth();
-        int height = bitMatrix.getHeight();
-        Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+            int width = bitMatrix.getWidth();
+            int height = bitMatrix.getHeight();
+            Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
 
-        int myColor = ContextCompat.getColor(context, R.color.primary); // Obtiene el color desde los recursos
+            int myColor = ContextCompat.getColor(context, R.color.primary); // Obtiene el color desde los recursos
 
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                bmp.setPixel(x, y, bitMatrix.get(x, y) ? myColor : android.graphics.Color.WHITE); // Usa el color de los recursos
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    bmp.setPixel(x, y, bitMatrix.get(x, y) ? myColor : android.graphics.Color.WHITE); // Usa el color de los recursos
+                }
             }
-        }
-        return bmp;
+            return bmp;
 
-    } catch (WriterException e) {
-        e.printStackTrace();
+        } catch (WriterException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
-    return null;
-}
 }

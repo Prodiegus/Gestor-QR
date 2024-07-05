@@ -302,8 +302,8 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="cloud" />
-                            <entry key="sourceFile" value="C:\Users\diego\Documents\Programas\Kotlin\Gestor-QR\app\img\cloud.svg" />
+                            <entry key="outputName" value="icon_removebg_preview_1" />
+                            <entry key="sourceFile" value="C:\Users\diego\Downloads\icon-removebg-preview_1.svg" />
                           </map>
                         </option>
                       </PersistentState>

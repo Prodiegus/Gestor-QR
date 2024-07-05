@@ -4,4 +4,5 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="nunca_jamas">Nunca Jamas</string>
     <string name="google_drive">Google Drive</string>
+    <string name="qr_code">Código QR</string>
 </resources>

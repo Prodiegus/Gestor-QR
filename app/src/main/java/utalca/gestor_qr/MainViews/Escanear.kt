@@ -80,6 +80,10 @@ class Escanear : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // Inflate the layout for this fragment
+        val view = inflater.inflate(R.layout.fragment_escanear, container, false)
+
+        // Check and request permissions if needed
         val permissions = arrayOf(
             android.Manifest.permission.CAMERA,
             android.Manifest.permission.ACCESS_FINE_LOCATION
@@ -90,41 +94,42 @@ class Escanear : Fragment() {
             requestPermissions(permissions, PERMISSIONS_REQUEST_CODE)
         }
 
-        val view = inflater.inflate(R.layout.fragment_escanear, container, false)
-
         barcodeView = view.findViewById(R.id.barcode_scanner)
         abrirScanButton = view.findViewById(R.id.abrir_scan_button)
 
         barcodeView.setStatusText("")
 
-        val callback = object : BarcodeCallback{
+        val callback = object : BarcodeCallback {
             override fun barcodeResult(result: BarcodeResult?) {
                 if (result != null) {
                     lifecycleScope.launch {
-                        val location = getLocalizacion()
-                        val title = getTitulo(result.text)
-                        qr =  QR(result.text, title, location!!.latitude, location!!.longitude)
-                        Log.d("Escanear", "QR: $qr")
-                        abrirScanButton.text = "Abrir Escaneo"
-                        abrirScanButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.dark))
-                        abrirScanButton.textSize = 14f
-                        abrirScanButton.visibility = View.VISIBLE
-                        barcodeView.pause()
+                        try {
+                            val location = getLocalizacion()
+                            val title = getTitulo(result.text)
+                            qr = QR(result.text, title, location!!.latitude, location!!.longitude)
+                            Log.d("Escanear", "QR: $qr")
+                            abrirScanButton.text = "Abrir Escaneo"
+                            abrirScanButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.dark))
+                            abrirScanButton.textSize = 14f
+                            abrirScanButton.visibility = View.VISIBLE
+                            barcodeView.pause()
+                        } catch (e: Exception) {
+                            Log.e("Escanear", "Error al procesar el QR", e)
+                            Toast.makeText(requireContext(), "Error al procesar el QR", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 } else {
                     Toast.makeText(requireContext(), "No se pudo escanear", Toast.LENGTH_SHORT).show()
                 }
             }
 
-            override fun possibleResultPoints(resultPoints: List<ResultPoint>) {
-
-            }
-
+            override fun possibleResultPoints(resultPoints: List<ResultPoint>) {}
         }
-        barcodeView.decodeSingle(callback)
 
+        barcodeView.decodeSingle(callback)
         return view
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -174,51 +179,60 @@ class Escanear : Fragment() {
             activity?.finish()
         }
 }
-
     private suspend fun getTitulo(url: String): String {
         if (url.isEmpty()) {
             return ""
         }
-        if (url === null) {
-            return ""
-        }
         return withContext(Dispatchers.IO) {
-            val doc = Jsoup.connect(url).get()
-            val title = doc.title()
-            if (title.isNotEmpty()) {
-                title
-            } else {
-                val bodyText = doc.body().text()
-                val words = bodyText.split(" ")
-                if (words.size >= 2) {
-                    words[0] + " " + words[1]
+            try {
+                val doc = Jsoup.connect(url).get()
+                val title = doc.title()
+                if (title.isNotEmpty()) {
+                    title
                 } else {
-                    bodyText
+                    val bodyText = doc.body().text()
+                    val words = bodyText.split(" ")
+                    if (words.size >= 2) {
+                        words[0] + " " + words[1]
+                    } else {
+                        bodyText
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("Escanear", "Error al obtener el título", e)
+                ""
+            }
+        }
+    }
+
+
+
+    private suspend fun getLocalizacion(): Location? {
+        return withContext(Dispatchers.IO) {
+            if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                val manualLocation = Location("manual")
+                manualLocation.latitude = -35.423244
+                manualLocation.longitude = -71.648483
+                manualLocation
+            } else {
+                try {
+                    suspendCancellableCoroutine<Location?> { continuation ->
+                        fusedLocationClient.lastLocation
+                            .addOnSuccessListener { location ->
+                                continuation.resume(location)
+                            }
+                            .addOnFailureListener { exception ->
+                                continuation.resumeWithException(exception)
+                            }
+                    }
+                } catch (e: Exception) {
+                    Log.e("Escanear", "Error al obtener la localización", e)
+                    null
                 }
             }
         }
     }
 
- private suspend fun getLocalizacion(): Location? {
-    return withContext(Dispatchers.IO) {
-        if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            val manualLocation = Location("manual")
-            manualLocation.latitude = -35.423244
-            manualLocation.longitude = -71.648483
-            manualLocation
-        } else {
-            suspendCancellableCoroutine<Location?> { continuation ->
-                fusedLocationClient.lastLocation
-                    .addOnSuccessListener { location ->
-                        continuation.resume(location)
-                    }
-                    .addOnFailureListener { exception ->
-                        continuation.resumeWithException(exception)
-                    }
-            }
-        }
-    }
-}
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {

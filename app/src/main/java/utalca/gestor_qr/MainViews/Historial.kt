@@ -33,7 +33,10 @@ import utalca.gestor_qr.MainModel.QR
 import utalca.gestor_qr.MainModel.Serializador
 import utalca.gestor_qr.R
 import utalca.gestor_qr.VerQR
-import kotlin.math.log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -176,29 +179,37 @@ class Historial : Fragment(), ListAdapter.OnItemClickListener {
     }
 
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
-        try {
-            val account = completedTask.getResult(ApiException::class.java)
-            val idToken = account?.idToken
-            val driveServiceHelper = DriveServiceHelper(requireContext(), account!!)
-            val serializador = Serializador(requireContext())
-            val QRs = driveServiceHelper.getFile()
-            for (qr in QRs) {
-                serializador.guardarQR(qr, qr.getNombre() ?: "")
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val account = completedTask.getResult(ApiException::class.java)
+                val driveServiceHelper = DriveServiceHelper(requireContext(), account!!)
+                val serializador = Serializador(requireContext())
+
+                // Retrieve QRs in a background thread
+                val QRs = withContext(Dispatchers.IO) {
+                    driveServiceHelper.getFile()
+                }
+
+                // Process the result back on the main thread
+                for (qr in QRs) {
+                    serializador.guardarQR(qr, qr.getNombre() ?: "")
+                }
+
+                // Perform upload operations in a background thread
+                withContext(Dispatchers.IO) {
+                    for (qr in myDataset) {
+                        driveServiceHelper.uploadFile(qr, "application/octet-stream")
+                    }
+                }
+
+                // Update UI on the main thread
+                myDataset = Serializador(requireContext()).cargarQR()
+                adapter.setList(myDataset)
+                Toast.makeText(requireContext(), "Sincronización con Google Drive exitosa", Toast.LENGTH_SHORT).show()
+            } catch (e: ApiException) {
+                Log.e("Error", "signInResult:failed code=" + e.statusCode)
+                Toast.makeText(requireContext(), "Error al sincronizar con Google Drive", Toast.LENGTH_SHORT).show()
             }
-            for (qr in myDataset) {
-                driveServiceHelper.uploadFile(qr, "application/octet-stream")
-            }
-            myDataset = Serializador(requireContext()).cargarQR()
-            adapter.setList(myDataset)
-            Toast.makeText(requireContext(), "Sincronización con Google Drive exitosa", Toast.LENGTH_SHORT).show()
-        } catch (e: ApiException) {
-           Log.e("Error", "signInResult:failed code=" + e.statusCode)
-            Log.e("Error", "signInResult:failed message=" + e.message)
-            Log.e("Error", "signInResult:failed cause=" + e.cause)
-            Log.e("Error", "signInResult:failed localizedMessage=" + e.localizedMessage)
-            Log.e("Error", "signInResult:failed stackTrace=" + e.stackTrace)
-            Log.e("Error", "signInResult:failed supressed=" + e.suppressed)
-            Toast.makeText(requireContext(), "Error al sincronizar con Google Drive", Toast.LENGTH_SHORT).show()
         }
     }
 
