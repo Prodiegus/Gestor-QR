@@ -3,16 +3,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainViews.Crear">
+    tools:context=".MainViews.Crear"
+    android:padding="16dp"
+    android:background="@color/ligth">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:layout_marginTop="30dp"
-        android:fontFamily="sans-serif"
-        android:textSize="40sp"
-        android:text="Crear" />
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Titulo">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/titulo_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enlace Web"
+            android:layout_marginTop="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/enlace_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/crear_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Crear Codigo QR"
+            android:layout_marginTop="32dp"
+            android:padding="12dp"
+            android:backgroundTint="@color/primary"
+            android:textColor="@android:color/white"/>
+    </LinearLayout>
 </FrameLayout>
