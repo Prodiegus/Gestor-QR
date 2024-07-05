@@ -16,7 +16,12 @@ android {
         resources.excludes += "META-INF/NOTICE.txt"
         resources.excludes += "META-INF/notice.txt"
     }
-
+    configurations {
+        all {
+            exclude(group = "commons-logging", module = "commons-logging")
+            exclude(group = "org.apache.httpcomponents", module = "httpclient")
+        }
+    }
     defaultConfig {
         applicationId = "utalca.gestor_qr"
         minSdk = 21
@@ -68,6 +73,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:20.0.0")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
     implementation("com.google.android.material:material:1.4.0")
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.2")
     implementation( "com.google.api-client:google-api-client:1.31.5")
     implementation ("com.google.apis:google-api-services-drive:v3-rev136-1.25.0")
