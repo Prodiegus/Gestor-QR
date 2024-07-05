@@ -31,7 +31,16 @@ class Crear : Fragment() {
         crearButton.setOnClickListener {
             val titulo = tituloEditText.text.toString()
             val enlace = enlaceEditText.text.toString()
-            mostrarPrevisualizacion(titulo, enlace)
+            if (titulo.isNotEmpty() && enlace.isNotEmpty()) {
+                mostrarPrevisualizacion(titulo, enlace)
+            } else {
+                if (titulo.isEmpty()) {
+                    tituloEditText.error = "El título no puede estar vacío"
+                }
+                if (enlace.isEmpty()) {
+                    enlaceEditText.error = "El enlace no puede estar vacío"
+                }
+            }
         }
 
         return view
