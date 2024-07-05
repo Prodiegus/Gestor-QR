@@ -241,7 +241,4 @@ class Historial : Fragment(), ListAdapter.OnItemClickListener {
         startActivity(intent)
         parentFragmentManager.popBackStack()
     }
-
-
-
 }

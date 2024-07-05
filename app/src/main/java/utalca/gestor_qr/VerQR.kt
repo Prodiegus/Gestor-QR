@@ -65,8 +65,11 @@ class VerQR : AppCompatActivity() {
             supportActionBar?.setDisplayShowHomeEnabled(true)
             supportActionBar?.setDisplayShowTitleEnabled(false)
             supportActionBar?.setHomeAsUpIndicator(R.drawable.back_arrow)
+
+            // Obtén el título del QR desde el Intent y actualiza el TextView
             val toolbarTitle = findViewById<TextView>(R.id.toolbar_title)
-            toolbarTitle.text = qr.getNombre()
+            val tituloQR = intent.getStringExtra("titulo_qr")
+            toolbarTitle.text = tituloQR ?: qr.getNombre()
         } else {
             // Si no se obtuvo un objeto QR, iniciar MainActivity
             val intent = Intent(this, MainActivity::class.java)
@@ -79,14 +82,14 @@ class VerQR : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-               finish()
+                finish()
                 true
             }
             R.id.share -> {
                 val qr = intent.getSerializableExtra("qr") as QR
                 if (qr != null) {
                     val serializador = Serializador(this)
-                    val qrFile = serializador.serializarQRToFile(qr, qr.getNombre()+".qr")
+                    val qrFile = serializador.serializarQRToFile(qr, qr.getNombre() + ".qr")
                     val uri = FileProvider.getUriForFile(this,  this.applicationContext.packageName + ".provider", qrFile)
                     val sendIntent: Intent = Intent().apply {
                         action = Intent.ACTION_SEND
@@ -104,11 +107,13 @@ class VerQR : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.toolbar_menu, menu)
         return true
     }
-    private fun initMainActivity(){
+
+    private fun initMainActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
