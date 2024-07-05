@@ -185,27 +185,27 @@ class Historial : Fragment(), ListAdapter.OnItemClickListener {
                 val driveServiceHelper = DriveServiceHelper(requireContext(), account!!)
                 val serializador = Serializador(requireContext())
 
-                // Retrieve QRs in a background thread
                 val QRs = withContext(Dispatchers.IO) {
                     driveServiceHelper.getFile()
                 }
 
-                // Process the result back on the main thread
                 for (qr in QRs) {
                     serializador.guardarQR(qr, qr.getNombre() ?: "")
                 }
 
-                // Perform upload operations in a background thread
                 withContext(Dispatchers.IO) {
                     for (qr in myDataset) {
                         driveServiceHelper.uploadFile(qr, "application/octet-stream")
                     }
                 }
-
-                // Update UI on the main thread
-                myDataset = Serializador(requireContext()).cargarQR()
-                adapter.setList(myDataset)
-                Toast.makeText(requireContext(), "Sincronización con Google Drive exitosa", Toast.LENGTH_SHORT).show()
+                if(isAdded){
+                    myDataset = Serializador(requireContext()).cargarQR()
+                    adapter.setList(myDataset)
+                    Toast.makeText(requireContext(), "Sincronización con Google Drive exitosa", Toast.LENGTH_SHORT).show()
+                } else {
+                    Log.e("Error", "Fragment not attached")
+                    Toast.makeText(requireContext(), "Error al sincronizar con Google Drive", Toast.LENGTH_SHORT).show()
+                }
             } catch (e: ApiException) {
                 Log.e("Error", "signInResult:failed code=" + e.statusCode)
                 Toast.makeText(requireContext(), "Error al sincronizar con Google Drive", Toast.LENGTH_SHORT).show()
